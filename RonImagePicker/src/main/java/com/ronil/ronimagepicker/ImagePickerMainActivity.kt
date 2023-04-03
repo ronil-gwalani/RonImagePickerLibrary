@@ -162,7 +162,7 @@ class ImagePickerMainActivity : AppCompatActivity() {
     private fun openCamera() {
         val file = createImageFile()
         this.cameraImageUri =
-            FileProvider.getUriForFile(this, "com.ronil.ronimagepicker.fileprovider", file)
+            FileProvider.getUriForFile(this, "com.ronil.imagepicker.fileprovider", file)
         cameraLauncher.launch(this.cameraImageUri)
 
     }
