@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -16,10 +16,9 @@
             android:exported="false" />
         <activity
             android:name=".ImagePickerMainActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.Dialog"
-            android:exported="false" />
-
-<!--            android:authorities="com.ronil.imagepicker.fileprovider"-->
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.DayNight.Dialog" />
+        <!--android:authorities="com.ronil.imagepicker.fileprovider"-->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -28,7 +27,8 @@
             android:permission="android.permission.MANAGE_DOCUMENTS">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+                android:resource="@xml/file_paths"
+                tools:replace="android:resource" />
         </provider>
         <meta-data
             android:name="preloaded_fonts"
