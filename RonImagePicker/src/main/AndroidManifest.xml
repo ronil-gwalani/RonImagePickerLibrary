@@ -28,7 +28,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths"
-                tools:replace="android:resource" />
+              />
         </provider>
         <meta-data
             android:name="preloaded_fonts"
