@@ -163,6 +163,7 @@ class ImagePickerMainActivity : AppCompatActivity() {
         val file = createImageFile()
         this.cameraImageUri =
             FileProvider.getUriForFile(this, "${applicationContext.packageName}.fileprovider", file)
+
         cameraLauncher.launch(this.cameraImageUri)
 
     }
