@@ -14,6 +14,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -160,6 +161,10 @@ class ImagePickerMainActivity : AppCompatActivity() {
     }
 
     private fun openCamera() {
+        startCameraForResult.launch(Intent(this, CameraActivity::class.java))
+    }
+
+    private fun openCamera2() {
         val file = createImageFile()
         this.cameraImageUri =
             FileProvider.getUriForFile(this, "${applicationContext.packageName}.fileprovider", file)
@@ -268,6 +273,37 @@ class ImagePickerMainActivity : AppCompatActivity() {
         fileOutputStream.flush()
         fileOutputStream.close()
         return file1
+    }
+
+
+    private val startCameraForResult = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imagePath = result.data?.getStringExtra(RESULT_IMAGE_PATH)
+            val imageFile: File? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                result.data?.getSerializableExtra(
+                    RESULT_IMAGE_FILE, File::class.java
+                )
+            } else {
+                result.data?.getSerializableExtra(RESULT_IMAGE_FILE) as File
+            }
+            if (imageFile?.exists() == true) {
+                if (wantCrop) {
+                    cropImage(imagePath ?: "")
+                } else {
+                    val resultIntent = Intent()
+                    setResultAndFinish(imagePath, imageFile, resultIntent)
+                }
+            } else {
+                Toast.makeText(this, "Some Error Occur Try Again!!", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+                finish()
+            }
+        } else {
+            dialog.dismiss()
+            finish()
+        }
     }
 
 
