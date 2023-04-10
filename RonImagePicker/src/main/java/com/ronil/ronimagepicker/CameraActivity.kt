@@ -6,11 +6,14 @@ import android.content.Intent
 import android.graphics.*
 import android.graphics.Bitmap.CompressFormat
 import android.hardware.camera2.*
+import android.media.AudioManager
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.core.Camera
@@ -193,9 +196,31 @@ class CameraActivity : AppCompatActivity() {
         binding.click.isEnabled = false
         binding.goBack.isEnabled = false
         binding.changerCamera.isEnabled = false
+        binding.previewView.visibility = View.GONE
         binding.progressBar.visibility = View.VISIBLE
-        mediaPlayer.start()
-
+        binding.animation.visibility = View.VISIBLE
+        binding.animation.playAnimation()
+        val am: AudioManager?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            am = getSystemService(AUDIO_SERVICE) as AudioManager
+            when (am.ringerMode) {
+                AudioManager.RINGER_MODE_SILENT -> Toast.makeText(
+                    this,
+                    "Image Captured",
+                    Toast.LENGTH_SHORT
+                ).show()
+                AudioManager.RINGER_MODE_VIBRATE -> Toast.makeText(
+                    this,
+                    "Image Captured",
+                    Toast.LENGTH_SHORT
+                ).show()
+                AudioManager.RINGER_MODE_NORMAL -> {
+                    mediaPlayer.start()
+                }
+            }
+        } else {
+            mediaPlayer.start()
+        }
 
         try {
             val photo = File.createTempFile(Date().time.toString() + "", "jpg")
@@ -204,6 +229,7 @@ class CameraActivity : AppCompatActivity() {
                 getExecutor(),
                 object : ImageCapture.OnImageSavedCallback {
                     override fun onImageSaved(outputFileResults: OutputFileResults) {
+
                         if (!backCamera) {
                             val rotatedBitmapFile = reverseByHorizontal(photo)
                             binding.savedImage.setImageURI(rotatedBitmapFile.toUri())
@@ -216,10 +242,12 @@ class CameraActivity : AppCompatActivity() {
                         binding.goBack.isEnabled = true
                         binding.changerCamera.isEnabled = true
                         binding.progressBar.visibility = View.GONE
+                        binding.animation.visibility = View.GONE
                         showOptionLayout()
                     }
 
                     override fun onError(exception: ImageCaptureException) {
+
                         Toast.makeText(
                             this@CameraActivity,
                             exception.message + "",
@@ -229,6 +257,7 @@ class CameraActivity : AppCompatActivity() {
                         binding.goBack.isEnabled = true
                         binding.changerCamera.isEnabled = true
                         binding.progressBar.visibility = View.GONE
+                        binding.animation.visibility = View.GONE
 
                     }
                 })
@@ -304,7 +333,6 @@ class CameraActivity : AppCompatActivity() {
         return photo
 
     }
-
 
 
 }
