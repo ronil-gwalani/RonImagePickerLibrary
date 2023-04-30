@@ -14,7 +14,7 @@ allprojects {
 
  ```gradel
 dependencies {
-	        implementation 'com.github.ronil-gwalani:RonImagePicker:$VersonName' // here VersionName = 1.0.1
+	        implementation 'com.github.ronil-gwalani:RonImagePicker:$VersonName' // here VersionName = V-1.2.1
 	}
   ```
   
@@ -26,23 +26,24 @@ dependencies {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         
-            RonImagePicker(this, this).getImage(//Do not try to pass ResultImage callback in here it won't work just implement it the way it is in example
-                crop = true,         // By default its true mark it false if you don't want that
-                cameraOnly = true,   // if you only want image from camera pass cameraOnly=true
-                galleyOnly = true,   // if you only want image from camera pass galleyOnly=true
-                compress = true,     // by default compression is false if you need it pass compress = true
-                compressionPercentage = 80,// only greater than 50 and less than 100 values are allowed for compression
-                // & if you have chosen crop then no need to pass compression its automatically compressed
-            )
+              val imagePicker = RonImagePicker(this, this)//here you have to pass the context and ResultImageCallback
+            //do not initialize the object in here intelligize it exactly as it shown is the example
+            imagePicker
+                .allowCrop(false)//by default its true
+                .allowCompress(true,90)//by default its false and the compress percentage is only applicable between 60-100
+                .allowGalleyOnly(false)//by default both camera & gallery options are showing if you want only one mark it true
+                .allowCameraOnly(false)//by default both camera & gallery options are showing if you want only one mark it true
+                .start()//this method starts the image picker
       
         
         }
          
          
          
-         
-      override val startForResult: ActivityResultLauncher<Intent> = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+   // here you have to override this result callback do not pass it as object it wont work
+    override val result: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result: ActivityResult ->
         if (result.resultCode == Activity.RESULT_OK) {
             val imagePath = result.data?.getStringExtra(RESULT_IMAGE_PATH)
             val imageFile: File? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -52,12 +53,14 @@ dependencies {
             } else {
                 result.data?.getSerializableExtra(RESULT_IMAGE_FILE) as File
             }
-            imageView.setImageURI(Uri.fromFile(imageFile))
+            binding.image.setImageURI(Uri.fromFile(imageFile))
 //            here you got the image path and image file do whatever you want to do with it
 //            Just check the null safety and file existence before using it
 //            doSomeOperations()
 
         }
-     }
+
+
+    }
         
  }
