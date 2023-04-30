@@ -5,17 +5,38 @@ import android.content.Intent
 
 class RonImagePicker(
     private val activity: Context,
-    private var resultImage: ResultImage
+    private var resultImageCallback: ResultImage
+
 ) {
+    private var crop: Boolean = true
+    private var cameraOnly: Boolean = false
+    private var galleyOnly: Boolean = false
+    private var compress: Boolean = false
+    private var compressionPercentage: Int = 100
 
 
-    fun getImage(
-        crop: Boolean = true,
-        cameraOnly: Boolean = false,
-        galleyOnly: Boolean = false,
-        compress: Boolean = false,
-        compressionPercentage: Int = 100
-    ) {
+    fun allowCrop(crop: Boolean): RonImagePicker {
+        this.crop = crop
+        return this
+    }
+
+    fun allowCameraOnly(cameraOnly: Boolean): RonImagePicker {
+        this.cameraOnly = cameraOnly
+        return this
+    }
+
+    fun allowGalleyOnly(galleyOnly: Boolean): RonImagePicker {
+        this.galleyOnly = galleyOnly
+        return this
+    }
+
+    fun allowCompress(compress: Boolean, compressionPercentage: Int): RonImagePicker {
+        this.compress = compress
+        this.compressionPercentage = compressionPercentage
+        return this
+    }
+
+    fun start() {
         val selection = if (cameraOnly && !galleyOnly) {
             CAMERA
         } else if (galleyOnly && !cameraOnly) {
@@ -24,7 +45,7 @@ class RonImagePicker(
             BOTH
         }
 
-        resultImage.startForResult.launch(
+        resultImageCallback.result.launch(
             Intent(
                 activity,
                 ImagePickerMainActivity::class.java

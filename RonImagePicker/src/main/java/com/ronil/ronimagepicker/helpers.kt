@@ -15,5 +15,5 @@ const val WANT_COMPRESSION = "WANT_COMPRESSION"
 const val COMPRESSION_PERCENTAGE = "COMPRESSION_PERCENTAGE"
 
 interface ResultImage {
-    val startForResult: ActivityResultLauncher<Intent>
+    val result: ActivityResultLauncher<Intent>
 }

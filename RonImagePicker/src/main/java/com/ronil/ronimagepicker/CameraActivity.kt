@@ -13,7 +13,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.core.Camera
@@ -23,6 +22,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.LifecycleOwner
+import com.google.common.util.concurrent.ListenableFuture
 import com.ronil.ronimagepicker.databinding.ActivityCameraBinding
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -45,14 +45,15 @@ class CameraActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCameraBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         supportActionBar?.hide()
         mediaPlayer = MediaPlayer.create(this, R.raw.camera_sound)
-        initCamera(backCamera)
+        initCamera(backCamera,cameraProviderFuture)
         setFocusable()
 //        setZoomable()
         binding.changerCamera.setOnClickListener { v ->
             backCamera = !backCamera
-            initCamera(backCamera)
+            initCamera(backCamera, cameraProviderFuture)
         }
         binding.click.setOnClickListener {
             captureImage()
@@ -67,6 +68,7 @@ class CameraActivity : AppCompatActivity() {
             val resultIntent = Intent()
             resultIntent.putExtra(RESULT_IMAGE_PATH, file?.absolutePath)
             resultIntent.putExtra(RESULT_IMAGE_FILE, file)
+            cameraProviderFuture.get().unbindAll()
             setResult(Activity.RESULT_OK, resultIntent)
             finish()
 
@@ -149,9 +151,10 @@ class CameraActivity : AppCompatActivity() {
 
     }
 
-    private fun initCamera(front: Boolean) {
-
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+    private fun initCamera(
+        front: Boolean,
+        cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
+    ) {
         cameraProviderFuture.addListener({
             try {
                 val processCameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
