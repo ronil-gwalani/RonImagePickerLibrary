@@ -8,7 +8,7 @@ class RonImagePicker(
     private var resultImageCallback: ResultImage
 
 ) {
-    private var crop: Boolean = true
+    private var crop: Boolean = false
     private var cameraOnly: Boolean = false
     private var galleyOnly: Boolean = false
     private var compress: Boolean = false

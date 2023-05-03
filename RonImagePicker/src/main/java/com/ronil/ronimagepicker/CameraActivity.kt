@@ -226,7 +226,7 @@ class CameraActivity : AppCompatActivity() {
         }
 
         try {
-            val photo = File.createTempFile(Date().time.toString() + "", "jpg")
+            val photo = File.createTempFile(Date().time.toString() + "", ".jpg")
             imageCapture.takePicture(
                 OutputFileOptions.Builder(photo).build(),
                 getExecutor(),
