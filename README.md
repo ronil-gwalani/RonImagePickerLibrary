@@ -29,7 +29,7 @@ dependencies {
               val imagePicker = RonImagePicker(this, this)//here you have to pass the context and ResultImageCallback
             //do not initialize the object in here intelligize it exactly as it shown is the example
             imagePicker
-                .allowCrop(false)//by default its true
+                .allowCrop(false)//by default its false
                 .allowCompress(true,90)//by default its false and the compress percentage is only applicable between 60-100
                 .allowGalleyOnly(false)//by default both camera & gallery options are showing if you want only one mark it true
                 .allowCameraOnly(false)//by default both camera & gallery options are showing if you want only one mark it true
