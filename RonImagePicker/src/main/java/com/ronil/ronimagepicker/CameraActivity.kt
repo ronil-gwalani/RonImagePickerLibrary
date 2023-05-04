@@ -317,7 +317,7 @@ class CameraActivity : AppCompatActivity() {
     fun reverseByHorizontal(original: File): File {
         val bitmap = BitmapFactory.decodeFile(original.path)
 
-        val photo = File.createTempFile(Date().time.toString() + "", "jpg")
+        val photo = File.createTempFile(Date().time.toString() + "", ".jpg")
         val bos = ByteArrayOutputStream()
         val matrix = Matrix()
         matrix.preScale(-1f, 1f)
