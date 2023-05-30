@@ -14,7 +14,7 @@ allprojects {
 
  ```gradel
 dependencies {
-	        implementation 'com.github.ronil-gwalani:RonImagePicker:$VersonName' // here VersionName = V-1.2.1
+	        implementation 'com.github.ronil-gwalani:RonImagePicker:$VersonName' // here VersionName = V-1.0.02
 	}
   ```
   
