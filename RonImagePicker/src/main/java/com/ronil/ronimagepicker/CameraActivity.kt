@@ -18,6 +18,7 @@ import androidx.camera.core.*
 import androidx.camera.core.Camera
 import androidx.camera.core.ImageCapture.OutputFileOptions
 import androidx.camera.core.ImageCapture.OutputFileResults
+import androidx.camera.core.R
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -35,10 +36,10 @@ import java.util.concurrent.TimeUnit
 
 class CameraActivity : AppCompatActivity() {
     lateinit var binding: ActivityCameraBinding
-    lateinit var imageCapture: ImageCapture
-    var backCamera = true
+    private lateinit var imageCapture: ImageCapture
+    private var backCamera = true
     var file: File? = null
-    lateinit var mediaPlayer: MediaPlayer
+    private lateinit var mediaPlayer: MediaPlayer
     var camera: Camera? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,15 +48,19 @@ class CameraActivity : AppCompatActivity() {
         setContentView(binding.root)
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         supportActionBar?.hide()
-        mediaPlayer = MediaPlayer.create(this, R.raw.camera_sound)
+        mediaPlayer = MediaPlayer.create(this, com.ronil.ronimagepicker.R.raw.camera_sound)
         initCamera(backCamera,cameraProviderFuture)
         setFocusable()
 //        setZoomable()
-        binding.changerCamera.setOnClickListener { v ->
+
+
+        binding.changerCamera.setOnClickListener {
+
             backCamera = !backCamera
             initCamera(backCamera, cameraProviderFuture)
         }
         binding.click.setOnClickListener {
+
             captureImage()
         }
         binding.cancelCapture.setOnClickListener {
@@ -201,8 +206,6 @@ class CameraActivity : AppCompatActivity() {
         binding.changerCamera.isEnabled = false
         binding.previewView.visibility = View.GONE
         binding.progressBar.visibility = View.VISIBLE
-        binding.animation.visibility = View.VISIBLE
-        binding.animation.playAnimation()
         val am: AudioManager?
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             am = getSystemService(AUDIO_SERVICE) as AudioManager
@@ -233,19 +236,18 @@ class CameraActivity : AppCompatActivity() {
                 object : ImageCapture.OnImageSavedCallback {
                     override fun onImageSaved(outputFileResults: OutputFileResults) {
 
-                        if (!backCamera) {
-                            val rotatedBitmapFile = reverseByHorizontal(photo)
-                            binding.savedImage.setImageURI(rotatedBitmapFile.toUri())
-                            file = rotatedBitmapFile
-                        } else {
-                            file = photo
-                            binding.savedImage.setImageURI(photo.toUri())
-                        }
+//                        if (!backCamera) {
+//                            val rotatedBitmapFile = reverseByHorizontal(photo)
+//                            binding.savedImage.setImageURI(rotatedBitmapFile.toUri())
+//                            file = rotatedBitmapFile
+//                        } else {
+                        file = photo
+                        binding.savedImage.setImageURI(photo.toUri())
+//                    }
                         binding.click.isEnabled = true
                         binding.goBack.isEnabled = true
                         binding.changerCamera.isEnabled = true
                         binding.progressBar.visibility = View.GONE
-                        binding.animation.visibility = View.GONE
                         showOptionLayout()
                     }
 
@@ -260,7 +262,6 @@ class CameraActivity : AppCompatActivity() {
                         binding.goBack.isEnabled = true
                         binding.changerCamera.isEnabled = true
                         binding.progressBar.visibility = View.GONE
-                        binding.animation.visibility = View.GONE
 
                     }
                 })
@@ -273,7 +274,7 @@ class CameraActivity : AppCompatActivity() {
         binding.optionLayout.visibility = View.VISIBLE
         binding.savedImage.visibility = View.VISIBLE
         binding.previewView.visibility = View.GONE
-        binding.actionLayout.visibility = View.GONE
+        binding.actionLayout.visibility = View.INVISIBLE
     }
 
     private fun captureImageAgain() {
@@ -327,10 +328,10 @@ class CameraActivity : AppCompatActivity() {
             bitmap.height, matrix, false
         )
         rotatedBitmap.compress(CompressFormat.PNG, 0 /*ignored for PNG*/, bos)
-        val bitmapdata: ByteArray = bos.toByteArray()
+        val bitmapData: ByteArray = bos.toByteArray()
 
         val fos = FileOutputStream(photo)
-        fos.write(bitmapdata)
+        fos.write(bitmapData)
         fos.flush()
         fos.close()
         return photo

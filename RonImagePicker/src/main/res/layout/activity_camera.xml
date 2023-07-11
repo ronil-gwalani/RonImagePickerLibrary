@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:background="@android:color/black"
     tools:context=".CameraActivity">
 
     <ProgressBar
@@ -19,43 +19,30 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animation"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/optionLayout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/gallary_loding"
-        app:lottie_renderMode="automatic"
-        app:lottie_repeatMode="reverse" />
 
     <androidx.camera.view.PreviewView
         android:id="@+id/preview_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@android:color/black"
         app:layout_constraintBottom_toTopOf="@id/actionLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
 
     <ImageView
         android:id="@+id/savedImage"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:contentDescription="@string/hint_image"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/optionLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/actionLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,58 +53,98 @@
 
         <ImageView
             android:id="@+id/goBack"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginHorizontal="40dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_cancel_icon" />
+            android:contentDescription="@string/hint_image"
+            android:padding="15dp"
+            android:src="@drawable/ic_cancel_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/click"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@android:color/white" />
+
 
         <ImageView
             android:id="@+id/click"
-            android:layout_width="match_parent"
+            android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginHorizontal="30dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_click_img" />
+            android:contentDescription="@string/hint_image"
+            android:src="@drawable/ic_click_img"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/goBack"
+
+            app:layout_constraintRight_toLeftOf="@id/changerCamera"
+            app:layout_constraintTop_toTopOf="parent" />
+
 
         <ImageView
             android:id="@+id/changerCamera"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginHorizontal="40dp"
             android:layout_weight="1"
+            android:contentDescription="@string/hint_image"
+            android:padding="10dp"
             android:src="@drawable/ic_change_camera"
+            app:layout_constraintBottom_toBottomOf="parent"
+
+            app:layout_constraintLeft_toRightOf="@+id/click"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:tint="#FFFFFF" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/optionLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/black"
         android:gravity="center_vertical"
-        android:padding="20dp"
+        android:padding="10dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="gone">
 
         <ImageView
             android:id="@+id/cancelCapture"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="50dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="40dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_cancel_icon" />
+            android:background="@android:color/black"
+            android:contentDescription="@string/hint_image"
+            android:padding="15dp"
+            android:src="@drawable/ic_cancel_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
 
+
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/done"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/done"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="50dp"
+
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="40dp"
             android:layout_weight="1"
+            android:contentDescription="@string/hint_image"
+            android:padding="15dp"
             android:src="@drawable/ic_img_right"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/cancelCapture"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:tint="#FFFFFF" />
 
-    </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

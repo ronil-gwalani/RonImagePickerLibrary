@@ -5,8 +5,10 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.media.ExifInterface
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.ronil.ronimagepicker.databinding.ActivityCoppingBinding
@@ -16,33 +18,48 @@ import java.io.IOException
 import java.util.*
 
 class CroppingActivity : AppCompatActivity() {
-    private lateinit var croppedImage: CropImageView
     var path: String = ""
 
     lateinit var binding: ActivityCoppingBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCoppingBinding.inflate(layoutInflater)
+        val outValue = TypedValue()
         path = intent.getStringExtra(FILE_PATH) ?: ""
         setContentView(binding.root)
         supportActionBar?.hide()
+//        binding.imageView1.setImageURI(Uri.parse(path))
         setRotation()
         setListeners()
     }
 
     private fun setListeners() {
-        binding.yesmakechange.setOnClickListener {
+        binding.yesConfirm.setOnClickListener {
             cropImageClick()
         }
-        binding.nochangeplease.setOnClickListener {
+        binding.noChange.setOnClickListener {
             finish()
         }
     }
 
     private fun setRotation() {
-        croppedImage = binding.cropimageview
+        val tempBitmap = BitmapFactory.decodeFile(path)
         var scale = 0.0f
-        val bitmap = BitmapFactory.decodeFile(path)
+        val exif = ExifInterface(path)
+        val orientation = exif.getAttributeInt(
+            ExifInterface.TAG_ORIENTATION,
+            ExifInterface.ORIENTATION_UNDEFINED
+        )
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+            // No rotation needed
+        }
+
+        val bitmap = Bitmap.createBitmap(tempBitmap, 0, 0, tempBitmap.width, tempBitmap.height, matrix, true)
+//        binding.imageView2.setImageBitmap(bitmap)
 
         binding.rotation.setOnClickListener {
             val matrix = Matrix()
@@ -59,18 +76,18 @@ class CroppingActivity : AppCompatActivity() {
                 matrix,
                 true
             )
-            croppedImage.setImageBitmap(rotatedBitmap)
+            binding.cropimageview.setImageBitmap(rotatedBitmap)
         }
-        croppedImage.setImageBitmap(bitmap)
-        if (croppedImage.croppedImage == null) {
-            binding.rotation.performClick()
-        }
+        binding.cropimageview.setImageBitmap(bitmap)
+//        if (croppedImage.croppedImage == null) {
+//            binding.rotation.performClick()
+//        }
 
     }
 
     private fun cropImageClick() {
         try {
-            val bitmap: Bitmap? = croppedImage.croppedImage
+            val bitmap: Bitmap? = binding.cropimageview.croppedImage
             val resultIntent = Intent()
             if (bitmap == null) {
                 Toast.makeText(
