@@ -1,4 +1,4 @@
-package com.ronil.ronimagepicker
+package com.ronil.ronimagepicker.activities
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -18,12 +18,13 @@ import androidx.camera.core.*
 import androidx.camera.core.Camera
 import androidx.camera.core.ImageCapture.OutputFileOptions
 import androidx.camera.core.ImageCapture.OutputFileResults
-import androidx.camera.core.R
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
+import com.ronil.ronimagepicker.utils.RESULT_IMAGE_FILE
+import com.ronil.ronimagepicker.utils.RESULT_IMAGE_PATH
 import com.ronil.ronimagepicker.databinding.ActivityCameraBinding
 import java.io.ByteArrayOutputStream
 import java.io.File

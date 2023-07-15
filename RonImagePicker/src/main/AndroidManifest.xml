@@ -23,13 +23,13 @@
 
     <application>
         <activity
-            android:name=".CameraActivity"
+            android:name=".activities.CameraActivity"
             android:exported="false" />
         <activity
-            android:name=".CroppingActivity"
+            android:name=".activities.CroppingActivity"
             android:exported="false" />
         <activity
-            android:name=".ImagePickerMainActivity"
+            android:name=".activities.ImagePickerMainActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.DayNight.Dialog" /> <!-- android:authorities="com.ronil.imagepicker.fileprovider" -->
         <provider

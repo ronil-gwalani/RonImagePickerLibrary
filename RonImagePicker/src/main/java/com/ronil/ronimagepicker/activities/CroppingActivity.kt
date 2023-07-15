@@ -1,26 +1,28 @@
-package com.ronil.ronimagepicker
+package com.ronil.ronimagepicker.activities
 
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.media.ExifInterface
 import android.os.Bundle
-import android.util.Log
-import android.util.TypedValue
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.exifinterface.media.ExifInterface
+import com.ronil.ronimagepicker.utils.FILE_PATH
+import com.ronil.ronimagepicker.R
+import com.ronil.ronimagepicker.utils.RESULT_IMAGE_FILE
+import com.ronil.ronimagepicker.utils.RESULT_IMAGE_PATH
 import com.ronil.ronimagepicker.databinding.ActivityCoppingBinding
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.*
+import java.util.Date
 
 class CroppingActivity : AppCompatActivity() {
     private var path: String = ""
 
-    lateinit var binding: ActivityCoppingBinding
+    private lateinit var binding: ActivityCoppingBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCoppingBinding.inflate(layoutInflater)

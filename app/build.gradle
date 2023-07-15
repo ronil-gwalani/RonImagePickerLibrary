@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace 'com.ronil.ronimagepicker.project'
-    compileSdk 33
+    compileSdk 34
 
 
 
     defaultConfig {
         applicationId "com.ronil.ronimagepicker.project"
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         versionCode 3
         versionName "1.0.3"
 

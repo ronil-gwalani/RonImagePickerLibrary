@@ -1,4 +1,4 @@
-package com.ronil.ronimagepicker
+package com.ronil.ronimagepicker.utils
 
 const val RESULT_IMAGE_PATH = "RESULT_IMAGE_PATH"
 const val RESULT_IMAGE_FILE = "RESULT_IMAGE_FILE"

@@ -1,4 +1,4 @@
-package com.ronil.ronimagepicker
+package com.ronil.ronimagepicker.activities
 
 import android.Manifest
 import android.app.Activity
@@ -21,6 +21,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import com.ronil.ronimagepicker.utils.CAMERA
+import com.ronil.ronimagepicker.utils.COMPRESSION_PERCENTAGE
+import com.ronil.ronimagepicker.utils.FILE_PATH
+import com.ronil.ronimagepicker.utils.GALLERY
+import com.ronil.ronimagepicker.R
+import com.ronil.ronimagepicker.utils.RESULT_IMAGE_FILE
+import com.ronil.ronimagepicker.utils.RESULT_IMAGE_PATH
+import com.ronil.ronimagepicker.utils.SELECTION_TYPE
+import com.ronil.ronimagepicker.utils.WANT_COMPRESSION
+import com.ronil.ronimagepicker.utils.WANT_CROP
 import com.ronil.ronimagepicker.databinding.ImagPickerDialogueBinding
 import java.io.File
 import java.io.FileOutputStream
