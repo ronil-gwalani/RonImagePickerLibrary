@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val imagePicker = CMImagePicker(this, launcher)
+        val imagePicker = RonImagePicker(this, launcher)
         imagePicker
             .allowCrop(false)
             .allowCompress(true, 90)
