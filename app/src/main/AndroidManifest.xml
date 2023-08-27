@@ -12,7 +12,7 @@
         android:theme="@style/Theme.RonImagePicker"
         tools:targetApi="31">
         <activity
-            android:name="com.ronil.ronimagepicker.MainActivity"
+            android:name="com.ronil.imagepicker.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
