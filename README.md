@@ -37,12 +37,12 @@ allprojects {
 In your app-level build.gradle file, add the dependency for the image-picker library:
 ```kotlin
 dependencies {
-    implementation 'com.github.:image-picker:$VersonName'
+    implementation 'com.github.ronil-gwalani:RonImagePickerLibrary:$VersonName'
 }
 ```
 Replace `$VersonName` with the actual version you want to use, for example:
 ```kotlin
-implementation 'com.github.colourmoon:image-picker:v1.0.0'
+implementation 'com.github.ronil-gwalani:RonImagePickerLibrary:v1.0.5'
 ```
 
 ## Step 3. Implement ResultImage in your Activity/Fragment and Call CMImagePicker
@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity() {
 
 ## Configuration and descriotion Along with Comment
 ```kotlin
-val imagePicker = CMImagePicker(this, launcher)
+val imagePicker = RonImagePicker(this, launcher)
 imagePicker
     .allowCrop(false) // Enable or disable cropping (default: false)
     .allowCompress(true, 90) // Enable compression with quality percentage (default: false, quality: 60-100)
@@ -141,8 +141,8 @@ Image Picker Library is released under the **MIT License**. See the [LICENSE](ht
 
 ## Support
 
-For any questions or support related to Image Picker Library, you can reach out to us at ronilgwalani@colourmoon.com, pushpendra@thecolourmoon.com or join our community forum.
+For any questions or support related to Image Picker Library, you can reach out to us at ronilgwalani@colourmoon.com or join my community forum.
 
 ## Credits
 
-The Image Picker Library library was developed by [Ronil Gwalani](https://github.com/ronilgwalnai)
+The Image Picker Library library was developed by [Ronil Gwalani](https://github.com/ronilgwalnai) feel free to contact in case of any query.
