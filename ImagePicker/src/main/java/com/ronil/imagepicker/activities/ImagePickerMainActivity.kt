@@ -21,6 +21,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import com.ronil.imagepicker.R
+import com.ronil.imagepicker.databinding.ImagPickerDialogueBinding
 import com.ronil.imagepicker.utils.CAMERA
 import com.ronil.imagepicker.utils.COMPRESSION_PERCENTAGE
 import com.ronil.imagepicker.utils.FILE_PATH
@@ -30,8 +32,6 @@ import com.ronil.imagepicker.utils.RESULT_IMAGE_PATH
 import com.ronil.imagepicker.utils.SELECTION_TYPE
 import com.ronil.imagepicker.utils.WANT_COMPRESSION
 import com.ronil.imagepicker.utils.WANT_CROP
-import com.ronil.imagepicker.R
-import com.ronil.imagepicker.databinding.ImagPickerDialogueBinding
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Date
@@ -172,7 +172,8 @@ class ImagePickerMainActivity : AppCompatActivity() {
     }
 
     private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
         galleryLauncher.launch(intent)
     }
 
@@ -313,7 +314,11 @@ class ImagePickerMainActivity : AppCompatActivity() {
                     setResultAndFinish(imagePath, imageFile, resultIntent)
                 }
             } else {
-                Toast.makeText(this, getString(R.string.some_error_occur_try_again), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.some_error_occur_try_again),
+                    Toast.LENGTH_SHORT
+                ).show()
                 dialog.dismiss()
                 finish()
             }

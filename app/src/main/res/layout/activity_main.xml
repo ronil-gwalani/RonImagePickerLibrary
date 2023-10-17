@@ -4,5 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.ronil.imagepicker.MainActivity">
+    <ImageView
+        android:layout_width="match_parent"
+        android:id="@+id/image"
+        android:contentDescription="@string/app_name"
+        android:layout_height="match_parent"/>
 
 </FrameLayout>
