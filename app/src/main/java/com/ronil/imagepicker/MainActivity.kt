@@ -22,10 +22,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        RonImagePicker(this, resultCallback).allowGalleryOnly(true).start()
+//        RonImagePicker(this, resultCallback).allowGalleryOnly(true).start()
 
     }
 
+/*
     private val resultCallback = object : ResultImage {
         override val result: ActivityResultLauncher<Intent> = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -47,5 +48,6 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+*/
 
 }
