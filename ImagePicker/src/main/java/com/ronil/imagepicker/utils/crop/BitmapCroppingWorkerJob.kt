@@ -1,10 +1,8 @@
-package com.ronil.ronilkotlin.Croper.cropper
+package com.ronil.imagepicker.utils.crop
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import com.ronil.imagepicker.utils.crop.BitmapUtils
-import com.ronil.imagepicker.utils.crop.CropImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

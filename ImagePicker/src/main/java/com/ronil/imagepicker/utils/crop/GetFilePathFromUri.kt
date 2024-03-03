@@ -1,4 +1,4 @@
-package com.ronil.ronilkotlin.Croper.cropper.utils
+package com.ronil.imagepicker.utils.crop
 
 import android.content.ContentResolver
 import android.content.Context

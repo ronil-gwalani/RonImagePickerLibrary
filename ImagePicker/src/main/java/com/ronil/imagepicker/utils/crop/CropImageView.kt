@@ -26,9 +26,6 @@ import android.widget.ProgressBar
 import androidx.core.util.component1
 import androidx.core.util.component2
 import androidx.exifinterface.media.ExifInterface
-import com.ronil.ronilkotlin.Croper.cropper.BitmapCroppingWorkerJob
-import com.ronil.ronilkotlin.Croper.cropper.BitmapLoadingWorkerJob
-import com.ronil.ronilkotlin.Croper.cropper.utils.getFilePathFromUri
 import com.ronil.imagepicker.R
 import java.lang.ref.WeakReference
 import java.util.UUID

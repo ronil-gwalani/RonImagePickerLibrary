@@ -21,7 +21,6 @@ class RonImagePicker(
     private var cameraOnly: Boolean = false
     private var galleryOnly: Boolean = false
     private var compress: Boolean = false
-    private var compressionPercentage: Int = 100
 
 
     fun allowCrop(crop: Boolean): RonImagePicker {
@@ -39,9 +38,8 @@ class RonImagePicker(
         return this
     }
 
-    fun allowCompress(compress: Boolean, compressionPercentage: Int): RonImagePicker {
+    fun allowCompress(compress: Boolean): RonImagePicker {
         this.compress = compress
-        this.compressionPercentage = compressionPercentage
         return this
     }
 
@@ -62,7 +60,6 @@ class RonImagePicker(
                 putExtra(WANT_CROP, crop)
                 putExtra(SELECTION_TYPE, selection)
                 putExtra(WANT_COMPRESSION, compress)
-                putExtra(COMPRESSION_PERCENTAGE, compressionPercentage)
             }
         )
     }

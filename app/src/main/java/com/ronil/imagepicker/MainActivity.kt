@@ -1,28 +1,21 @@
 package com.ronil.imagepicker
 
-import android.app.Activity
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageView
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.ronil.imagepicker.project.R
-import com.ronil.imagepicker.utils.RESULT_IMAGE_FILE
-import com.ronil.imagepicker.utils.RESULT_IMAGE_PATH
-import com.ronil.imagepicker.utils.ResultImage
-import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
     val imageView: ImageView by lazy { findViewById(R.id.image) }
+    val getImage: Button by lazy { findViewById(R.id.getImage) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        RonImagePicker(this, resultCallback).allowGalleryOnly(true).start()
+        getImage.setOnClickListener {
+//            RonImagePicker(this, resultCallback).allowCrop(true).allowCompress(true).start()
+        }
 
     }
 
