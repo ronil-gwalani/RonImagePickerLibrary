@@ -42,7 +42,7 @@ dependencies {
 ```
 Replace `$VersonName` with the actual version you want to use, for example:
 ```kotlin
-implementation 'com.github.ronil-gwalani:RonImagePickerLibrary:v1.0.06'
+implementation 'com.github.ronil-gwalani:RonImagePickerLibrary:v1.0.7'
 ```
 
 ## Step 3. Implement ResultImage in your Activity/Fragment and Call CMImagePicker
@@ -58,8 +58,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import com.colourmoon.imagepicker.CMImagePicker
-import com.colourmoon.imagepicker.ResultImage
+import com.ronil.imagepicker.utils.ResultImage
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -72,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         val imagePicker = RonImagePicker(this, launcher)
         imagePicker
             .allowCrop(false)
-            .allowCompress(true, 90)
+            .allowCompress(true)
             .allowGalleryOnly(false)
             .allowCameraOnly(false)
             .start()
@@ -106,7 +105,7 @@ class MainActivity : AppCompatActivity() {
 val imagePicker = RonImagePicker(this, launcher)
 imagePicker
     .allowCrop(false) // Enable or disable cropping (default: false)
-    .allowCompress(true, 90) // Enable compression with quality percentage (default: false, quality: 60-100)
+    .allowCompress(true) // Enable compression  (default: false)
     .allowGalleryOnly(false) // Allow only gallery selection (default: both camera and gallery)
     .allowCameraOnly(false) // Allow only camera usage (default: both camera and gallery)
     .start() // Launch the image picker
@@ -141,7 +140,7 @@ Image Picker Library is released under the **MIT License**. See the [LICENSE](ht
 
 ## Support
 
-For any questions or support related to Image Picker Library, you can reach out to us at ronilgwalani@colourmoon.com or join my community forum.
+For any questions or support related to Image Picker Library, you can reach out to us at ronilgwalani@gmail.com or join my community forum.
 
 ## Credits
 
