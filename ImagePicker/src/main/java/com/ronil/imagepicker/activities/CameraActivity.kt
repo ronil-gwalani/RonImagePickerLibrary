@@ -3,35 +3,46 @@ package com.ronil.imagepicker.activities
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.graphics.*
+import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat
-import android.hardware.camera2.*
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.media.AudioManager
 import android.media.MediaPlayer
-import com.ronil.imagepicker.R
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
+import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.*
 import androidx.camera.core.Camera
+import androidx.camera.core.CameraInfoUnavailableException
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCapture.OutputFileOptions
 import androidx.camera.core.ImageCapture.OutputFileResults
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.MeteringPointFactory
+import androidx.camera.core.Preview
+import androidx.camera.core.SurfaceOrientedMeteringPointFactory
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.LifecycleOwner
+import com.google.common.util.concurrent.ListenableFuture
+import com.ronil.imagepicker.R
+import com.ronil.imagepicker.databinding.ActivityCameraBinding
 import com.ronil.imagepicker.utils.RESULT_IMAGE_FILE
 import com.ronil.imagepicker.utils.RESULT_IMAGE_PATH
-import com.google.common.util.concurrent.ListenableFuture
-import com.ronil.imagepicker.databinding.ActivityCameraBinding
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.*
+import java.util.Date
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
@@ -51,7 +62,7 @@ class CameraActivity : AppCompatActivity() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         supportActionBar?.hide()
         mediaPlayer = MediaPlayer.create(this, R.raw.camera_sound)
-        initCamera(backCamera,cameraProviderFuture)
+        initCamera(backCamera, cameraProviderFuture)
         setFocusable()
 //        setZoomable()
 
@@ -127,6 +138,7 @@ class CameraActivity : AppCompatActivity() {
                     MotionEvent.ACTION_DOWN -> {
                         true
                     }
+
                     MotionEvent.ACTION_UP -> {
                         val factory: MeteringPointFactory = SurfaceOrientedMeteringPointFactory(
                             binding.previewView.width.toFloat(),
@@ -148,6 +160,7 @@ class CameraActivity : AppCompatActivity() {
                         }
                         true
                     }
+
                     else -> {
                         scaleGestureDetector.onTouchEvent(event)
                         return@setOnTouchListener true
@@ -217,11 +230,13 @@ class CameraActivity : AppCompatActivity() {
                     "Image Captured",
                     Toast.LENGTH_SHORT
                 ).show()
+
                 AudioManager.RINGER_MODE_VIBRATE -> Toast.makeText(
                     this,
                     "Image Captured",
                     Toast.LENGTH_SHORT
                 ).show()
+
                 AudioManager.RINGER_MODE_NORMAL -> {
                     mediaPlayer.start()
                 }
@@ -238,14 +253,14 @@ class CameraActivity : AppCompatActivity() {
                 object : ImageCapture.OnImageSavedCallback {
                     override fun onImageSaved(outputFileResults: OutputFileResults) {
 
-//                        if (!backCamera) {
-//                            val rotatedBitmapFile = reverseByHorizontal(photo)
-//                            binding.savedImage.setImageURI(rotatedBitmapFile.toUri())
-//                            file = rotatedBitmapFile
-//                        } else {
-                        file = photo
-                        binding.savedImage.setImageURI(photo.toUri())
-//                    }
+                        if (!backCamera) {
+                            val rotatedBitmapFile = reverseByHorizontal(photo)
+                            binding.savedImage.setImageURI(rotatedBitmapFile.toUri())
+                            file = rotatedBitmapFile
+                        } else {
+                            file = photo
+                            binding.savedImage.setImageURI(photo.toUri())
+                        }
                         binding.click.isEnabled = true
                         binding.goBack.isEnabled = true
                         binding.changerCamera.isEnabled = true
@@ -319,7 +334,6 @@ class CameraActivity : AppCompatActivity() {
 
     fun reverseByHorizontal(original: File): File {
         val bitmap = BitmapFactory.decodeFile(original.path)
-
         val photo = File.createTempFile(Date().time.toString() + "", ".jpg")
         val bos = ByteArrayOutputStream()
         val matrix = Matrix()
@@ -329,7 +343,7 @@ class CameraActivity : AppCompatActivity() {
             bitmap, 0, 0, bitmap.width,
             bitmap.height, matrix, false
         )
-        rotatedBitmap.compress(CompressFormat.PNG, 0 /*ignored for PNG*/, bos)
+        rotatedBitmap.compress(CompressFormat.PNG, 100 /*ignored for PNG*/, bos)
         val bitmapData: ByteArray = bos.toByteArray()
 
         val fos = FileOutputStream(photo)
