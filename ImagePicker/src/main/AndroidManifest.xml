@@ -21,8 +21,10 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
-    <application>
-        <activity
+    <application
+        android:requestLegacyExternalStorage="true">
+
+    <activity
             android:name="com.ronil.imagepicker.activities.CroppingActivity"
             android:exported="false" />
         <activity
