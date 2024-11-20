@@ -1,7 +1,12 @@
 package com.ronil.imagepicker.activities
 
 import android.Manifest
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.READ_MEDIA_IMAGES
+import android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
 import android.app.Activity
+import android.content.ContentResolver
+import android.content.ContentUris
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
@@ -17,14 +22,20 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ronil.imagepicker.R
 import com.ronil.imagepicker.databinding.ImagPickerDialogueBinding
+import com.ronil.imagepicker.databinding.LinitedImagesLayoutBinding
 import com.ronil.imagepicker.utils.CAMERA
 import com.ronil.imagepicker.utils.FILE_PATH
 import com.ronil.imagepicker.utils.GALLERY
+import com.ronil.imagepicker.utils.LimitAccessImageAdapter
 import com.ronil.imagepicker.utils.RESULT_IMAGE_FILE
 import com.ronil.imagepicker.utils.RESULT_IMAGE_PATH
 import com.ronil.imagepicker.utils.SELECTION_TYPE
@@ -35,6 +46,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Date
 import java.util.Objects
@@ -109,36 +121,10 @@ internal class ImagePickerMainActivity : AppCompatActivity() {
                 val path = cursor.getString(columIndex)
 
                 val file = File(path)
-                if (file.exists()) {
-                    if (wantCrop) {
-                        cropImage(path)
-                    } else {
-                        val resultIntent = Intent()
-                        if (wantCompress ) {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                try {
-                                    val compressedFile =
-                                        compress(
-                                            file
-                                        )
-                                    if (compressedFile.exists()) {
-                                        setResultAndFinish(
-                                            Uri.fromFile(compressedFile).path,
-                                            compressedFile,
-                                            resultIntent
-                                        )
-                                    } else {
-                                        setResultAndFinish(path, file, resultIntent)
 
-                                    }
-                                } catch (e: Exception) {
-                                    setResultAndFinish(path, file, resultIntent)
-                                }
-                            }
-                        } else {
-                            setResultAndFinish(path, file, resultIntent)
-                        }
-                    }
+
+                if (file.exists()) {
+                    manageProcessing(path, file)
                 }
             }
         } else {
@@ -147,24 +133,94 @@ internal class ImagePickerMainActivity : AppCompatActivity() {
         }
     }
 
+    private fun manageProcessing(path: String, file: File) {
+        if (wantCrop) {
+            cropImage(path)
+        } else {
+            val resultIntent = Intent()
+            if (wantCompress) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val compressedFile =
+                            compress(
+                                file
+                            )
+                        if (compressedFile.exists()) {
+                            setResultAndFinish(
+                                Uri.fromFile(compressedFile).path,
+                                compressedFile,
+                                resultIntent
+                            )
+                        } else {
+                            setResultAndFinish(path, file, resultIntent)
+
+                        }
+                    } catch (e: Exception) {
+                        setResultAndFinish(path, file, resultIntent)
+                    }
+                }
+            } else {
+                setResultAndFinish(path, file, resultIntent)
+            }
+        }
+
+    }
+
     private fun checkGalleryPermission() {
         from = GALLERY
-        val readImagePermission =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) Manifest.permission.READ_MEDIA_IMAGES else Manifest.permission.READ_EXTERNAL_STORAGE
-        if (checkCallingOrSelfPermission(readImagePermission) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissionLauncher.launch(
-                readImagePermission
-            )
-
+        if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+        ) {
+            if (
+                ContextCompat.checkSelfPermission(this, READ_MEDIA_IMAGES) == PERMISSION_GRANTED
+            ) {
+                // Full access on Android 13 (API level 33) or higher
+                openGallery()
+            } else if (
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
+                ContextCompat.checkSelfPermission(
+                    this,
+                    READ_MEDIA_VISUAL_USER_SELECTED
+                ) == PERMISSION_GRANTED
+            ) {
+                openLimitedAccessImages()
+            } else if (
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
+                ContextCompat.checkSelfPermission(
+                    this,
+                    READ_MEDIA_VISUAL_USER_SELECTED
+                ) != PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(
+                    arrayOf(READ_MEDIA_IMAGES, READ_MEDIA_VISUAL_USER_SELECTED)
+                )
+            } else {
+                requestPermissionLauncher.launch(
+                    arrayOf(READ_MEDIA_IMAGES)
+                )
+            }
         } else {
-            openGallery()
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    READ_EXTERNAL_STORAGE
+                ) == PERMISSION_GRANTED
+            ) {
+                openGallery()
+            } else {
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        READ_EXTERNAL_STORAGE
+                    )
+                )
+            }
         }
+
     }
 
     private fun checkCameraPermission() {
         from = CAMERA
         if (checkCallingOrSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissionLauncher.launch(
+            cameraPermissionLauncher.launch(
                 Manifest.permission.CAMERA
             )
         } else {
@@ -193,7 +249,7 @@ internal class ImagePickerMainActivity : AppCompatActivity() {
 
 
     private fun cropImage(filePath: String) {
-        if (wantCompress ) {
+        if (wantCompress) {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val compressedFile =
@@ -201,14 +257,22 @@ internal class ImagePickerMainActivity : AppCompatActivity() {
                             File(filePath)
                         )
                     if (compressedFile.exists()) {
-                        startForResult.launch(Intent(this@ImagePickerMainActivity, CroppingActivity::class.java).also {
-                            it.putExtra(FILE_PATH,  compressedFile.absolutePath)
-                        })
+                        startForResult.launch(
+                            Intent(
+                                this@ImagePickerMainActivity,
+                                CroppingActivity::class.java
+                            ).also {
+                                it.putExtra(FILE_PATH, compressedFile.absolutePath)
+                            })
                     }
                 } catch (_: Exception) {
-                    startForResult.launch(Intent(this@ImagePickerMainActivity, CroppingActivity::class.java).also {
-                        it.putExtra(FILE_PATH, filePath)
-                    })
+                    startForResult.launch(
+                        Intent(
+                            this@ImagePickerMainActivity,
+                            CroppingActivity::class.java
+                        ).also {
+                            it.putExtra(FILE_PATH, filePath)
+                        })
                 }
             }
         } else {
@@ -217,9 +281,6 @@ internal class ImagePickerMainActivity : AppCompatActivity() {
             })
         }
 
-//        startForResult.launch(Intent(this, CroppingActivity::class.java).also {
-
-//
     }
 
     private val startForResult: ActivityResultLauncher<Intent> = registerForActivityResult(
@@ -236,69 +297,91 @@ internal class ImagePickerMainActivity : AppCompatActivity() {
             }
             val resultIntent = Intent()
             setResultAndFinish(imagePath, imageFile, resultIntent)
-
-            /*  if (wantCompress && compressPercentage > 50 && compressPercentage < 100) {
-                  CoroutineScope(Dispatchers.IO).launch {
-                      try {
-                          val compressedFile =
-                              if (imageFile?.exists() == true) {
-                                  compress(
-                                      compressPercentage,
-                                      imageFile
-                                  )
-                              } else {
-                                  imageFile
-                              }
-                          if (compressedFile?.exists() == true) {
-                              setResultAndFinish(
-                                  Uri.fromFile(compressedFile).path,
-                                  compressedFile,
-                                  resultIntent
-                              )
-                          } else {
-                              setResultAndFinish(compressedFile?.path, compressedFile, resultIntent)
-
-                          }
-                      } catch (e: Exception) {
-                          setResultAndFinish(imagePath, imageFile, resultIntent)
-                      }
-                  }
-              } else {
-                  setResultAndFinish(imagePath, imageFile, resultIntent)
-              }*/
-
-//            val resultIntent = Intent()
-//            resultIntent.putExtra(RESULT_IMAGE_PATH, imagePath)
-//            resultIntent.putExtra(RESULT_IMAGE_FILE, imageFile)
-//            setResult(Activity.RESULT_OK, resultIntent)
-//            finish()
         } else {
             dialog.dismiss()
             finish()
         }
     }
-    private val requestPermissionLauncher =
+
+
+    private val cameraPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
-
             if (isGranted) {
-                if (from == GALLERY) {
-                    openGallery()
-                } else if (from == CAMERA) {
-                    openCamera()
-                }
+                openCamera()
             } else {
-                val permissionMessage = if (from == GALLERY) {
-                    "Storage Permission is not Provided yet Please Provide the Permission so that we can Proceed further"
-                } else {
+                // Access denied
+                val permissionMessage =
                     "Camera Permission is not Provided yet Please Provide the Permission so that we can Proceed further"
-                }
+
                 android.app.AlertDialog.Builder(this).setTitle("Alert!!")
                     .setMessage(permissionMessage)
                     .setPositiveButton("Okay") { _, _ -> finish() }.show()
             }
         }
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            RequestMultiplePermissions()
+        ) { results ->
+            if (
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ContextCompat.checkSelfPermission(this, READ_MEDIA_IMAGES) == PERMISSION_GRANTED
+
+            ) {
+                // Full access on Android 13 (API level 33) or higher
+                openGallery()
+
+            } else if (
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
+                ContextCompat.checkSelfPermission(
+                    this,
+                    READ_MEDIA_VISUAL_USER_SELECTED
+                ) == PERMISSION_GRANTED
+            ) {
+
+                openLimitedAccessImages()
+                // Partial access on Android 14 (API level 34) or higher
+            } else if (ContextCompat.checkSelfPermission(
+                    this,
+                    READ_EXTERNAL_STORAGE
+                ) == PERMISSION_GRANTED
+            ) {
+                // Full access up to Android 12 (API level 32)
+                openGallery()
+            } else {
+                // Access denied
+                val permissionMessage =
+                    "Storage Permission is not Provided yet Please Provide the Permission so that we can Proceed further"
+                android.app.AlertDialog.Builder(this).setTitle("Alert!!")
+                    .setMessage(permissionMessage)
+                    .setPositiveButton("Okay") { _, _ -> finish() }.show()
+            }
+
+        }
+
+    private fun openLimitedAccessImages() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val images = getImages(contentResolver)
+            withContext(Dispatchers.Main) {
+
+                showSheet(images.map { it.uri }, {
+                    val file = getFileFromUri(it)
+                    if (file?.exists() == true) {
+                        manageProcessing(file.path, file)
+                    }
+                }) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        requestPermissionLauncher.launch(
+                            arrayOf(READ_MEDIA_IMAGES, READ_MEDIA_VISUAL_USER_SELECTED)
+                        )
+                    }
+                }
+            }
+        }
+
+    }
+
 
     private var cameraLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
@@ -314,7 +397,7 @@ internal class ImagePickerMainActivity : AppCompatActivity() {
                         cropImage(path)
                     } else {
                         val resultIntent = Intent()
-                        if (wantCompress ) {
+                        if (wantCompress) {
                             CoroutineScope(Dispatchers.IO).launch {
                                 try {
                                     val compressedFile =
@@ -365,7 +448,7 @@ internal class ImagePickerMainActivity : AppCompatActivity() {
     }
 
 
-    private suspend fun compress( bitmap: File): File {
+    private suspend fun compress(bitmap: File): File {
 
         val job = CoroutineScope(Dispatchers.IO).async {
             Compressor.compress(this@ImagePickerMainActivity, bitmap)
@@ -388,13 +471,14 @@ internal class ImagePickerMainActivity : AppCompatActivity() {
     ) { result: ActivityResult ->
         if (result.resultCode == Activity.RESULT_OK) {
             val imagePath = result.data?.getStringExtra(RESULT_IMAGE_PATH)
-            val imageFile: File? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                result.data?.getSerializableExtra(
-                    RESULT_IMAGE_FILE, File::class.java
-                )
-            } else {
-                result.data?.getSerializableExtra(RESULT_IMAGE_FILE) as File
-            }
+            val imageFile: File? =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    result.data?.getSerializableExtra(
+                        RESULT_IMAGE_FILE, File::class.java
+                    )
+                } else {
+                    result.data?.getSerializableExtra(RESULT_IMAGE_FILE) as File
+                }
             if (imageFile?.exists() == true) {
                 if (wantCrop) {
                     cropImage(imagePath ?: "")
@@ -471,4 +555,91 @@ internal class ImagePickerMainActivity : AppCompatActivity() {
     }
 
 
+    private fun showSheet(imageUris: List<Uri>, onclick: (Uri) -> Unit, manageAccess: () -> Unit) {
+        val sheetBinding: LinitedImagesLayoutBinding =
+            LinitedImagesLayoutBinding.inflate(this.layoutInflater)
+        val dialogue = BottomSheetDialog(this)
+        dialogue.setOnCancelListener {
+            finish()
+        }
+        val adapter = LimitAccessImageAdapter(imageUris) {
+            dialogue.dismiss()
+            onclick(it)
+        }
+        sheetBinding.recyclerView.adapter = adapter
+        sheetBinding.btnManagePhotos.setOnClickListener {
+            dialogue.dismiss()
+            manageAccess()
+        }
+        dialogue.setContentView(sheetBinding.root)
+        dialogue.show()
+    }
+
+    data class Media(
+        val uri: Uri,
+        val name: String,
+        val size: Long,
+        val mimeType: String,
+    )
+
+    // Run the querying logic in a coroutine outside of the main thread to keep the app responsive.
+// Keep in mind that this code snippet is querying only images of the shared storage.
+    private suspend fun getImages(contentResolver: ContentResolver): List<Media> =
+        withContext(Dispatchers.IO) {
+            val projection = arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.MIME_TYPE,
+            )
+
+            val collectionUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Query all the device storage volumes instead of the primary only
+                MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
+            } else {
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            }
+
+            val images = mutableListOf<Media>()
+
+            contentResolver.query(
+                collectionUri,
+                projection,
+                null,
+                null,
+                "${MediaStore.Images.Media.DATE_ADDED} DESC"
+            )?.use { cursor ->
+                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                val displayNameColumn =
+                    cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+                val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
+                val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+
+                while (cursor.moveToNext()) {
+                    val uri = ContentUris.withAppendedId(collectionUri, cursor.getLong(idColumn))
+                    val name = cursor.getString(displayNameColumn)
+                    val size = cursor.getLong(sizeColumn)
+                    val mimeType = cursor.getString(mimeTypeColumn)
+
+                    val image = Media(uri, name, size, mimeType)
+                    images.add(image)
+                }
+            }
+
+            return@withContext images
+        }
+
+
+    private fun getFileFromUri(uri: Uri): File? {
+        val projection = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = contentResolver.query(uri, projection, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                val filePath = it.getString(columnIndex)
+                return File(filePath)
+            }
+        }
+        return null
+    }
 }

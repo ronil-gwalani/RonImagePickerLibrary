@@ -100,7 +100,7 @@ internal object BitmapUtils {
         val degrees: Int = when (orientationAttributeInt) {
             ExifInterface.ORIENTATION_ROTATE_90, ExifInterface.ORIENTATION_TRANSVERSE,
             ExifInterface.ORIENTATION_TRANSPOSE,
-            -> 90
+                -> 90
 
             ExifInterface.ORIENTATION_ROTATE_180 -> 180
             ExifInterface.ORIENTATION_ROTATE_270 -> 270
@@ -249,7 +249,9 @@ internal object BitmapUtils {
         )
         if (result == bitmap) {
             // corner case when all bitmap is selected, no worth optimizing for it
-            result = bitmap.copy(bitmap.config, false)
+            bitmap.config?.let {
+                result = bitmap.copy(it, false)
+            }
         }
         // rotating by 0, 90, 180 or 270 degrees doesn't require extra cropping
         if (degreesRotated % 90 != 0) {
