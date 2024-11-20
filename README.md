@@ -42,7 +42,7 @@ dependencies {
 ```
 Replace `$VersonName` with the actual version you want to use, for example:
 ```kotlin
-implementation 'com.github.ronil-gwalani:RonImagePickerLibrary:v1.0.7'
+implementation 'com.github.ronil-gwalani:RonImagePickerLibrary:v1.0.8'
 ```
 
 ## Step 3. Implement ResultImage in your Activity/Fragment and Call CMImagePicker
