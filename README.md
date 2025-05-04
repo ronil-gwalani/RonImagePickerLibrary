@@ -134,9 +134,27 @@ With these steps, you should be able to successfully integrate and use the Image
 
 Contributions to Image Picker Library are welcome! If you find any issues or have suggestions for improvements, feel free to open an issue or submit a pull request.
 
-## License
 
-Image Picker Library is released under the **MIT License**. See the [LICENSE](https://en.wikipedia.org/wiki/MIT_License) file for more details.
+## 💬 Feedback & Contributions
+
+Suggestions and contributions are always welcome!  
+Feel free to open issues or pull requests to improve this project.
+
+---
+
+## 🙋 About Me
+
+- 🌐 [ronildeveloper.in](https://ronildeveloper.in)  
+- 💼 [LinkedIn – Ronil Gwalani](https://www.linkedin.com/in/ronil-gwalani)  
+- 📄 [Download My Resume](https://ronildeveloper.in/files/Ronil-CV.pdf)
+
+---
+
+## 📜 License
+
+This project is open-source and free to use.  
+Released under the [MIT License](LICENSE).
+
 
 ## Support
 
