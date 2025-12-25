@@ -7,17 +7,17 @@ import android.widget.Button
 import android.widget.ImageView
 
 
-//import android.app.Activity
-//import android.content.Intent
-//import android.net.Uri
-//import android.os.Build
-//import androidx.activity.result.ActivityResult
-//import androidx.activity.result.ActivityResultLauncher
-//import androidx.activity.result.contract.ActivityResultContracts
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 //import com.ronil.imagepicker.utils.RESULT_IMAGE_FILE
 //import com.ronil.imagepicker.utils.RESULT_IMAGE_PATH
 //import com.ronil.imagepicker.utils.ResultImage
-//import java.io.File
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
   private  val imageView: ImageView by lazy { findViewById(R.id.image) }
@@ -25,9 +25,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        getImage.setOnClickListener {
+//        getImage.setOnClickListener {
 //            RonImagePicker(this, resultCallback).allowCrop(true).allowCompress(true).start()
-        }
+//        }
 
     }
 
